@@ -13,9 +13,12 @@
         pkgs = nixpkgs.legacyPackages.${system};
 
         # Define a custom python enviroment
-        custom_python_packages = python-packages: with python-packages; [
+        custom_python_packages = pp: [
+            pp.pytest
+            pp.python-lsp-server
         ];
         custom_python_env = pkgs.${python}.withPackages custom_python_packages;
+
         # Packages that we are going to use in both shells, for coding and for
         # writing the Latex thesis
         shared_packages = [];
@@ -34,18 +37,18 @@
             PYTHONPATH = "${custom_python_env}/${custom_python_env.sitePackages}:.:./src:./src/lib";
 
             # To install some packages using pip
-            shellHook = ''
-                if [ ! -d ".venv" ]; then
-                    python3 -m venv .venv;
-                fi
-                source .venv/bin/activate;
+            # shellHook = ''
+            #     if [ ! -d ".venv" ]; then
+            #         python3 -m venv .venv;
+            #     fi
+            #     source .venv/bin/activate;
 
-                # Install some packages that are not present in nix repos
-                pip install pytest python-lsp-server
+            #     # Install some packages that are not present in nix repos
+            #     pip install python-lsp-server
 
-                # Log that we're in a custom enviroment
-                echo "❄️  Running custom dev enviroment with python and other packages"
-            '';
+            #     # Log that we're in a custom enviroment
+            #     echo "❄️  Running custom dev enviroment with python and other packages"
+            # '';
         };
     });
 }
